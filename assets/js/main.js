@@ -20,15 +20,18 @@ CFG.rooms.forEach(function(r){$$('.price[data-room="'+r.id+'"]').forEach(functio
 var mb=$('.menu'),nv=$('#nav');
 if(mb&&nv){mb.addEventListener('click',function(){var o=nv.classList.toggle('open');mb.setAttribute('aria-expanded',o);});
 $$('a',nv).forEach(function(a){a.addEventListener('click',function(){nv.classList.remove('open');mb.setAttribute('aria-expanded','false');});});}
+addEventListener('scroll',function(){var h=document.querySelector('header');if(h)h.classList.toggle('scrolled',scrollY>18);},{passive:true});
+addEventListener('keydown',function(e){if(e.key==='Escape'&&nv&&nv.classList.contains('open')){nv.classList.remove('open');mb.setAttribute('aria-expanded','false');mb.focus();}});
+document.addEventListener('click',function(e){if(nv&&mb&&nv.classList.contains('open')&&!nv.contains(e.target)&&!mb.contains(e.target)){nv.classList.remove('open');mb.setAttribute('aria-expanded','false');}});
 
 /* gallery filter + lightbox (photos are static HTML) */
 if($('#galGrid')){
-var grid=$('#galGrid'),lb=$('#lb'),lbi=$('img',lb),vis=[],ci=0,opener=null;
+var grid=$('#galGrid'),lb=$('#lb'),lbi=$('img',lb),count=$('#lb-count'),vis=[],ci=0,opener=null;
 function visible(){return $$('.ph',grid).filter(function(b){return !b.hidden;});}
 $('#chips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;
 $$('.chip').forEach(function(c){c.setAttribute('aria-pressed',c===b);});
 $$('.ph',grid).forEach(function(p){p.hidden=b.textContent!=='All'&&p.dataset.c!==b.textContent;});});
-function show(i){ci=(i+vis.length)%vis.length;var b=vis[ci];lbi.src=b.dataset.src;lbi.alt=$('img',b).alt;}
+function show(i){ci=(i+vis.length)%vis.length;var b=vis[ci];lbi.src=b.dataset.src;lbi.alt=$('img',b).alt;if(count)count.textContent=(ci+1)+' / '+vis.length;}
 grid.addEventListener('click',function(e){var b=e.target.closest('.ph');if(!b)return;opener=b;vis=visible();show(vis.indexOf(b));lb.hidden=false;lb.classList.add('on');$('#lbx').focus();});
 function closeLB(){lb.classList.remove('on');lb.hidden=true;if(opener)opener.focus();}
 $('#lbx').onclick=closeLB;$('#lbp').onclick=function(e){e.stopPropagation();show(ci-1);};$('#lbn').onclick=function(e){e.stopPropagation();show(ci+1);};
@@ -50,7 +53,7 @@ var rm=/[?&]room=([\w-]+)/.exec(location.search);if(rm&&$('#room')&&$('#room opt
 
 /* background: real resort photos that follow the section in view (slow drift + scroll parallax + warm dusk tint).
    An optional video at assets/video/hero.* takes over once it plays and keeps the same scroll parallax. */
-var bg=$('#bg'),saver=navigator.connection&&navigator.connection.saveData,small=innerWidth<700;
+var bg=$('#bg'),saver=navigator.connection&&navigator.connection.saveData;
 var secs=$$('[data-bg]'),keys=[];
 secs.forEach(function(s){if(keys.indexOf(s.dataset.bg)<0)keys.push(s.dataset.bg);});
 if(!keys.length)keys=['g1'];
@@ -78,25 +81,15 @@ addEventListener('scroll',req,{passive:true});addEventListener('resize',req);add
 /* video (optional) */
 if(bg){
 if(reduce||saver){$$('source',bg).forEach(function(s){s.remove();});bg.load();}
-else{var goVid=function(){if(!document.body.classList.contains('vid')){document.body.classList.add('vid');if(typeof snowStop==='function')snowStop();}};
+else{var goVid=function(){if(!document.body.classList.contains('vid'))document.body.classList.add('vid');
 bg.addEventListener('playing',goVid);bg.addEventListener('timeupdate',function(){if(bg.currentTime>0)goVid();});
 if(!bg.paused&&bg.currentTime>0)goVid();}
 }
-/* light snowfall */
-var snowOn=!reduce&&!saver,sc=null,sx=null,flakes=[],sraf=0,lastT=0;
-if(snowOn){sc=document.createElement('canvas');sc.id='snow';sc.setAttribute('aria-hidden','true');stack.parentNode.insertBefore(sc,mist.nextSibling);sx=sc.getContext('2d');
-var NF=small?24:55;for(var q=0;q<NF;q++)flakes.push({x:Math.random(),y:Math.random(),r:.8+Math.random()*1.6,v:.02+Math.random()*.04,d:Math.random()*6});
-var sz=function(){sc.width=innerWidth;sc.height=innerHeight;};addEventListener('resize',sz);sz();
-var snowFrame=function(now){var dt=Math.min(.05,(now-lastT)/1000||.016);lastT=now;sx.clearRect(0,0,sc.width,sc.height);sx.fillStyle='rgba(255,255,255,.7)';
-flakes.forEach(function(f){f.y+=f.v*dt;f.d+=dt;if(f.y>1.02){f.y=-.02;f.x=Math.random();}var x=(f.x+Math.sin(f.d)*.006)*sc.width;sx.beginPath();sx.arc(x,f.y*sc.height,f.r,0,6.283);sx.fill();});
-sraf=requestAnimationFrame(snowFrame);};
-var snowGo=function(){if(!sraf&&!document.body.classList.contains('vid')){lastT=performance.now();sraf=requestAnimationFrame(snowFrame);}};
-var snowStop=function(){if(sraf){cancelAnimationFrame(sraf);sraf=0;}};
-snowGo();
 }
 document.addEventListener('visibilitychange',function(){
-if(document.hidden){if(snowOn)snowStop();if(bg&&!bg.paused)bg.pause();}
-else{if(document.body.classList.contains('vid')){if(bg)bg.play().catch(function(){});}else if(snowOn)snowGo();}});
+if(document.hidden){if(bg&&!bg.paused)bg.pause();}
+else if(document.body.classList.contains('vid')&&bg)bg.play().catch(function(){});
+});
 
 /* booking form */
 if($('#form')){
@@ -144,4 +137,7 @@ else if(k==='wa')e.href='https://wa.me/'+CFG.whatsapp;});
 var fab=document.createElement('div');fab.className='fab';
 fab.innerHTML='<a class="wa" href="https://wa.me/'+CFG.whatsapp+'" target="_blank" rel="noopener" aria-label="Chat with the resort on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.4-4.2A8 8 0 1 1 8.2 18.6z"/></svg></a><a href="tel:+'+CFG.whatsapp+'" aria-label="Call the resort"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a>';
 document.body.appendChild(fab);
+var mobileActions=document.createElement('div');mobileActions.className='mobile-actions';
+mobileActions.innerHTML='<a class="wa" href="https://wa.me/'+CFG.whatsapp+'" target="_blank" rel="noopener">WhatsApp</a><a href="tel:+'+CFG.whatsapp+'">Call</a><a class="book-action" href="book.html">Request a stay</a>';
+document.body.appendChild(mobileActions);
 })();

@@ -4,12 +4,12 @@ Static multi-page site: index, about, rooms, gallery, explore, getting-here, boo
 
 ## Run / deploy
 Open `index.html`, or upload the whole folder to any static host. Keep `assets/` next to the pages.
-Before launch replace `YOURDOMAIN` in `sitemap.xml`, `robots.txt`, the canonical and Open Graph tags of every page, and the JSON-LD in `index.html`.
+Production metadata is configured for `https://www.theletegaunresort.com/` in `sitemap.xml`, `robots.txt`, the canonical and Open Graph tags, and the JSON-LD in `index.html`.
 
 ## Background motion (real photos, synced to the page)
 The background uses the resort's own photos from `assets/images/` (gallery-1 to 4, setting). As you scroll, it crossfades to the photo assigned to the section in view (each `<section>` has a `data-bg` key from `config.js` `IMG`: g1, g2, g3, g4, setting). Photos drift slowly, move gently with scroll, get a warmer dusk glow the further you scroll, and a light mist and snowfall sit on top.
 Change which photo a section uses by editing its `data-bg` value.
-Optional real video: see `VIDEO-BRIEF.md`. Put `hero.mp4` and `hero.webm` in `assets/video/` and it replaces the photos automatically, keeping the scroll movement.
+The site currently uses the optimized photo backgrounds as a reliable fallback. If a real hero video is supplied later, add `hero.mp4` and `hero.webm` to `assets/video/` and restore the video sources in the page templates.
 Data saver and reduced-motion visitors get still photos with no drift or snow.
 
 ## Edit content

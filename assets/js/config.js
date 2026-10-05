@@ -6,8 +6,8 @@ address:'Thasang-3, Lete, Mustang, Gandaki Province, Nepal',facebook:'https://ww
 apiUrl:'',currency:'NPR',usdRate:null,
 policies:{'Check-in':'','Check-out':'','Cancellation':''},
 rooms:[
-{id:'main',name:'Main Building',img:'main',alt:'The main building lit up at dusk',desc:'The two-storey house at the heart of the resort, with timber balconies, stone walls and warm lighting at night.',price:null},
-{id:'cottage',name:'A-frame Cottages',img:'cottage',alt:'A-frame cottages glowing at dusk',desc:'Red-roofed A-frame cottages along a garden path, with pine forest behind and snow peaks beyond.',price:null}]};
+{id:'main',name:'Main Building',img:'main',alt:'The main building lit up at dusk',desc:'The two-storey house at the heart of the resort, with timber balconies, stone walls and warm lighting at night.',capacity:'Up to 4 guests',amenities:['Timber balconies','Mountain views','Warm lighting'],price:null},
+{id:'cottage',name:'A-frame Cottages',img:'cottage',alt:'A-frame cottages glowing at dusk',desc:'Red-roofed A-frame cottages along a garden path, with pine forest behind and snow peaks beyond.',capacity:'Up to 2 guests',amenities:['Private cottage','Pine forest setting','Mountain views'],price:null}]};
 var IMG={main:'assets/images/main-building.jpg',cottage:'assets/images/cottage.jpg',setting:'assets/images/setting.jpg',g1:'assets/images/gallery-1.jpg',g2:'assets/images/gallery-2.jpg',g3:'assets/images/gallery-3.jpg',g4:'assets/images/gallery-4.jpg',logo:'assets/images/logo.jpg'};
 var GAL=[
 {k:'g1',c:'Views',a:'The resort below the forested mountain',w:1},
